@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 data = np.loadtxt('mesh.dat', skiprows=1)
 
@@ -80,9 +81,14 @@ def quick_hull(data):
                     elif find_side(max_point, p2, point) < 0:
                         right.append(point)
             
-            add_hull(left, p1, max_point, side)
-            hull.append(max_point)
-            add_hull(right, max_point, p2, side)
+            if side > 0:
+                add_hull(left, p1, max_point, side)
+                hull.append(max_point)
+                add_hull(right, max_point, p2, side)
+            elif side < 0:
+                add_hull(right, max_point, p2, side)
+                hull.append(max_point)
+                add_hull(left, p1, max_point, side)
     hull.append(x_min)
     add_hull(top, x_min, x_max, 1)
     hull.append(x_max)
@@ -104,8 +110,27 @@ def monotone_chain(data):
         bot.append(point)
     return np.array(top[:-1] + bot[:-1])
 
-print(graham_scan(data))
-print(jarvis_march(data))
-print(quick_hull(data))
-print(monotone_chain(data))
-
+hull = graham_scan(data)
+plt.figure()
+plt.plot(hull[:, 0], hull[:, 1],color='red')
+plt.scatter(data[:, 0], data[:, 1], color='blue')
+plt.show()
+plt.savefig("graham_scan.png")
+hull = jarvis_march(data)
+plt.figure()
+plt.plot(hull[:, 0], hull[:, 1],color='red')
+plt.scatter(data[:, 0], data[:, 1], color='blue')
+plt.show()
+plt.savefig("jarvis_march.png")
+hull = quick_hull(data)
+plt.figure()
+plt.plot(hull[:, 0], hull[:, 1],color='red')
+plt.scatter(data[:, 0], data[:, 1], color='blue')
+plt.show()
+plt.savefig("quick_hull.png")
+hull = monotone_chain(data)
+plt.figure()
+plt.plot(hull[:, 0], hull[:, 1], color='red')
+plt.scatter(data[:, 0], data[:, 1], color='blue')
+plt.show()
+plt.savefig("monotone_chain.png")
