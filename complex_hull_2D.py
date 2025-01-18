@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 data = np.loadtxt('mesh.dat', skiprows=1)
 
@@ -110,6 +111,7 @@ def monotone_chain(data):
         bot.append(point)
     return np.array(top[:-1] + bot[:-1])
 
+
 hull = graham_scan(data)
 plt.figure()
 plt.plot(hull[:, 0], hull[:, 1],color='red')
@@ -134,3 +136,41 @@ plt.plot(hull[:, 0], hull[:, 1], color='red')
 plt.scatter(data[:, 0], data[:, 1], color='blue')
 plt.show()
 plt.savefig("monotone_chain.png")
+
+def generate_uniform_point_cloud(n):
+    return np.random.uniform(lower, upper, size=(n, 2))
+
+n = [10, 50, 100, 200, 400, 800, 1000]
+graham_times = []
+jarvis_times = []
+quick_times = []
+monotone_times = []
+for size in n:
+    data = generate_uniform_point_cloud(size)
+    starttime = time.time()
+    hull = graham_scan(data)
+    endtime = time.time()
+    graham_times.append(endtime - starttime)
+    starttime = time.time()
+    hull = jarvis_march(data)
+    endtime = time.time()
+    jarvis_times.append(endtime - starttime)
+    starttime = time.time()
+    hull = quick_hull(data)
+    endtime = time.time()
+    quick_times.append(endtime - starttime)
+    starttime = time.time()
+    hull = monotone_chain(data)
+    endtime = time.time()
+    monotone_times.append(endtime - starttime)
+plt.figure()
+plt.plot(n, graham_times, 'o', label='Graham Scan')
+plt.plot(n, jarvis_times, 'o', label='Jarvis March')
+plt.plot(n, quick_times, 'o', label='Quick Hull')
+plt.plot(n, monotone_times, 'o', label='Monotone Chain')
+plt.xlabel('Data Size')
+plt.ylabel('Runtime (s)')
+plt.legend()
+plt.show()
+plt.savefig("time_complexity.png")
+
