@@ -137,8 +137,10 @@ plt.scatter(data[:, 0], data[:, 1], color='blue')
 plt.show()
 plt.savefig("monotone_chain.png")
 
-def generate_uniform_point_cloud(n):
+def generate_uniform_point_cloud(lower, upper, n):
     return np.random.uniform(lower, upper, size=(n, 2))
+def generate_gaussian_point_cloud(mean, var, n):
+    return np.random.normal(mean, var, size=(n, 2))
 
 n = [10, 50, 100, 200, 400, 800, 1000]
 graham_times = []
@@ -146,7 +148,7 @@ jarvis_times = []
 quick_times = []
 monotone_times = []
 for size in n:
-    data = generate_uniform_point_cloud(size)
+    data = generate_gaussian_point_cloud(0, 1, size)
     starttime = time.time()
     hull = graham_scan(data)
     endtime = time.time()
@@ -172,5 +174,5 @@ plt.xlabel('Data Size')
 plt.ylabel('Runtime (s)')
 plt.legend()
 plt.show()
-plt.savefig("time_complexity.png")
+plt.savefig("time_complexity-gaussian.png")
 
