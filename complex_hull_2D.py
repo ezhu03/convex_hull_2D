@@ -29,16 +29,16 @@ def jarvis_march(data):
     x_min_ind = np.argmin(data[:, 0])
     x_min = data[x_min_ind]
     hull = []
-    p=x_min
+    p=x_min_ind
     n = len(data)
     while(True):
-        hull.append(p)
+        hull.append(data[p])
         q = (p + 1) % n
-        for r in data:
-            if np.cross(np.array(r-p), np.array(q-p)) < 0:
+        for r in range(n):
+            if np.cross(np.array(data[r]-data[p]), np.array(data[q]-data[p])) < 0:
                 q = r
         p = q
-        if np.allclose(p, x_min):
+        if p == x_min_ind:
             break
     return np.array(hull)
 
@@ -182,25 +182,29 @@ def time_histograms(filename):
     quick_times = []
     monotone_times = []
     size = 50
-    reps = 50
+    reps = 100
     for i in range(reps):
-        data = generate_gaussian_point_cloud(0, 1, size)
+        data = generate_uniform_point_cloud(0, 1, size)
         starttime = time.time()
         hull = graham_scan(data)
         endtime = time.time()
         graham_times.append(endtime - starttime)
+        print(i)
         starttime = time.time()
         hull = jarvis_march(data)
         endtime = time.time()
         jarvis_times.append(endtime - starttime)
+        print(i)
         starttime = time.time()
         hull = quick_hull(data)
         endtime = time.time()
         quick_times.append(endtime - starttime)
+        print(i)
         starttime = time.time()
         hull = monotone_chain(data)
         endtime = time.time()
         monotone_times.append(endtime - starttime)
+        print(i)
     labels = ['Graham Scan', 'Jarvis March', 'Quick Hull', 'Monotone Chain']
     arrays = [graham_times, jarvis_times, quick_times, monotone_times]
 

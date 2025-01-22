@@ -1,0 +1,4 @@
+Graham Scan: min-0.0012s max-0.0019s shape-right skewed normal distribution
+Jarvis March: min-0.0045s max-0.009s shape-normal distribution
+Quick Hull: min-0.0025s max-0.0055s shape-normal distribution
+Monotone Chain: min-0.0020s max-0.0027s shape-normal distribution
