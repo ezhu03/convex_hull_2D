@@ -136,43 +136,85 @@ plt.plot(hull[:, 0], hull[:, 1], color='red')
 plt.scatter(data[:, 0], data[:, 1], color='blue')
 plt.show()
 plt.savefig("monotone_chain.png")
-
 def generate_uniform_point_cloud(lower, upper, n):
-    return np.random.uniform(lower, upper, size=(n, 2))
+        return np.random.uniform(lower, upper, size=(n, 2))
 def generate_gaussian_point_cloud(mean, var, n):
     return np.random.normal(mean, var, size=(n, 2))
 
-n = [10, 50, 100, 200, 400, 800, 1000]
-graham_times = []
-jarvis_times = []
-quick_times = []
-monotone_times = []
-for size in n:
-    data = generate_gaussian_point_cloud(0, 1, size)
-    starttime = time.time()
-    hull = graham_scan(data)
-    endtime = time.time()
-    graham_times.append(endtime - starttime)
-    starttime = time.time()
-    hull = jarvis_march(data)
-    endtime = time.time()
-    jarvis_times.append(endtime - starttime)
-    starttime = time.time()
-    hull = quick_hull(data)
-    endtime = time.time()
-    quick_times.append(endtime - starttime)
-    starttime = time.time()
-    hull = monotone_chain(data)
-    endtime = time.time()
-    monotone_times.append(endtime - starttime)
-plt.figure()
-plt.plot(n, graham_times, 'o', label='Graham Scan')
-plt.plot(n, jarvis_times, 'o', label='Jarvis March')
-plt.plot(n, quick_times, 'o', label='Quick Hull')
-plt.plot(n, monotone_times, 'o', label='Monotone Chain')
-plt.xlabel('Data Size')
-plt.ylabel('Runtime (s)')
-plt.legend()
-plt.show()
-plt.savefig("time_complexity-gaussian.png")
+def time_complexity(filename):
+    n = [10, 50, 100, 200, 400, 800, 1000]
+    graham_times = []
+    jarvis_times = []
+    quick_times = []
+    monotone_times = []
+    for size in n:
+        data = generate_gaussian_point_cloud(0, 1, size)
+        starttime = time.time()
+        hull = graham_scan(data)
+        endtime = time.time()
+        graham_times.append(endtime - starttime)
+        starttime = time.time()
+        hull = jarvis_march(data)
+        endtime = time.time()
+        jarvis_times.append(endtime - starttime)
+        starttime = time.time()
+        hull = quick_hull(data)
+        endtime = time.time()
+        quick_times.append(endtime - starttime)
+        starttime = time.time()
+        hull = monotone_chain(data)
+        endtime = time.time()
+        monotone_times.append(endtime - starttime)
+    plt.figure()
+    plt.plot(n, graham_times, 'o', label='Graham Scan')
+    plt.plot(n, jarvis_times, 'o', label='Jarvis March')
+    plt.plot(n, quick_times, 'o', label='Quick Hull')
+    plt.plot(n, monotone_times, 'o', label='Monotone Chain')
+    plt.xlabel('Data Size')
+    plt.ylabel('Runtime (s)')
+    plt.legend()
+    plt.show()
+    plt.savefig(filename)
 
+def time_histograms(filename):
+    graham_times = []
+    jarvis_times = []
+    quick_times = []
+    monotone_times = []
+    size = 50
+    reps = 50
+    for i in range(reps):
+        data = generate_gaussian_point_cloud(0, 1, size)
+        starttime = time.time()
+        hull = graham_scan(data)
+        endtime = time.time()
+        graham_times.append(endtime - starttime)
+        starttime = time.time()
+        hull = jarvis_march(data)
+        endtime = time.time()
+        jarvis_times.append(endtime - starttime)
+        starttime = time.time()
+        hull = quick_hull(data)
+        endtime = time.time()
+        quick_times.append(endtime - starttime)
+        starttime = time.time()
+        hull = monotone_chain(data)
+        endtime = time.time()
+        monotone_times.append(endtime - starttime)
+    labels = ['Graham Scan', 'Jarvis March', 'Quick Hull', 'Monotone Chain']
+    arrays = [graham_times, jarvis_times, quick_times, monotone_times]
+
+    fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+
+    axes = axes.flatten()
+
+    for i, ax in enumerate(axes):
+        ax.hist(arrays[i], bins=30, alpha=0.7, color='blue', edgecolor='black')
+        ax.set_title(labels[i])
+        ax.set_xlabel('Value')
+        ax.set_ylabel('Frequency')
+
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(filename)
+time_histograms("time_histograms.png")
